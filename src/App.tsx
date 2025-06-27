@@ -27,11 +27,14 @@ function App() {
         return;
       }
 
+      console.log(`Parsed ${tasks.length} tasks from Excel file`);
+
       const finalSummary = await processTasks(tasks, (currentSummary) => {
         setSummary(currentSummary);
       });
 
       setSummary(finalSummary);
+      console.log('Processing completed:', finalSummary);
 
     } catch (err: any) {
       console.error('Processing error:', err);
@@ -46,7 +49,7 @@ function App() {
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
-          Excel to Supabase Sync
+          Excel to Supabase Sync - Juan Marquez Table
         </h1>
 
         {error && (
@@ -64,7 +67,30 @@ function App() {
 
         {!file && !processing && !summary && !error && (
            <div className="mt-8 p-6 bg-white rounded-lg shadow-md text-gray-700">
-             <p>Upload an Excel file (.xlsx) containing a sheet named "Tareas" with the required columns to start syncing data to your Supabase database.</p>
+             <h3 className="text-lg font-semibold mb-3">Expected Excel Columns:</h3>
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+               <div>• Id. de tarea</div>
+               <div>• Nombre de la tarea</div>
+               <div>• Nombre del depósito</div>
+               <div>• Progreso</div>
+               <div>• Priority</div>
+               <div>• Asignado a</div>
+               <div>• Creado por</div>
+               <div>• Fecha de creación</div>
+               <div>• Fecha de inicio</div>
+               <div>• Fecha de vencimiento</div>
+               <div>• Es periódica</div>
+               <div>• Con retraso</div>
+               <div>• Fecha de finalización</div>
+               <div>• Completado por</div>
+               <div>• Elementos de la lista de comprobación completados</div>
+               <div>• Elementos de la lista de comprobación</div>
+               <div>• Etiquetas</div>
+               <div>• Descripción</div>
+             </div>
+             <p className="mt-4 text-gray-600">
+               Upload an Excel file (.xlsx) containing a sheet named "Tareas" with these columns to start syncing data to your juan_marquez table in Supabase.
+             </p>
            </div>
         )}
 

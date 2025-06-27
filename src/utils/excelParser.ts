@@ -8,10 +8,19 @@ const REQUIRED_COLUMNS = [
   'Nombre del depósito',
   'Progreso',
   'Priority',
+  'Asignado a',
+  'Creado por',
   'Fecha de creación',
   'Fecha de inicio',
   'Fecha de vencimiento',
+  'Es periódica',
   'Con retraso',
+  'Fecha de finalización',
+  'Completado por',
+  'Elementos de la lista de comprobación completados',
+  'Elementos de la lista de comprobación',
+  'Etiquetas',
+  'Descripción',
 ];
 
 // Helper function to normalize column names for comparison
@@ -84,11 +93,12 @@ export const parseExcelFile = (file: File): Promise<Task[]> => {
         // Create column mapping between required and available columns
         const columnMapping = createColumnMapping(REQUIRED_COLUMNS, availableColumns);
         
-        // Check for missing required columns
-        const missingColumns = REQUIRED_COLUMNS.filter(col => !columnMapping[col]);
+        // Check for missing required columns (only check essential ones)
+        const essentialColumns = ['Id. de tarea', 'Nombre de la tarea'];
+        const missingEssentialColumns = essentialColumns.filter(col => !columnMapping[col]);
 
-        if (missingColumns.length > 0) {
-          throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
+        if (missingEssentialColumns.length > 0) {
+          throw new Error(`Missing essential columns: ${missingEssentialColumns.join(', ')}`);
         }
 
         // Normalize all task data using the column mapping
@@ -132,4 +142,28 @@ export const excelDateToISOString = (excelDate: number | string | Date): string 
      }
   }
   return null; // Return null for invalid or missing dates
+};
+
+// Helper to convert string/boolean values to boolean
+export const convertToBoolean = (value: string | boolean | null | undefined): boolean => {
+  if (typeof value === 'boolean') {
+    return value;
+  }
+  if (typeof value === 'string') {
+    const normalized = value.toLowerCase().trim();
+    return normalized === 'sí' || normalized === 'si' || normalized === 'yes' || normalized === 'true' || normalized === '1';
+  }
+  return false;
+};
+
+// Helper to convert string/number values to integer
+export const convertToInteger = (value: string | number | null | undefined): number => {
+  if (typeof value === 'number') {
+    return Math.floor(value);
+  }
+  if (typeof value === 'string') {
+    const parsed = parseInt(value.trim(), 10);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+  return 0;
 };
