@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import FileUploader from './components/FileUploader';
+import Uploader from './components/Uploader';
 import Summary from './components/Summary';
-import { parseExcelFile } from './utils/excelParser';
-import { processTasks } from './utils/dataProcessor';
+import { validateAndParse } from './utils/validator';
+import { processTasks } from './utils/processor';
 import { ProcessSummary, Task } from './types/task';
 import { AlertCircle } from 'lucide-react';
 
@@ -19,7 +19,7 @@ function App() {
     setError(null);
 
     try {
-      const tasks: Task[] = await parseExcelFile(selectedFile);
+      const tasks: Task[] = await validateAndParse(selectedFile);
 
       if (tasks.length === 0) {
         setError('The selected file is empty or the "Tareas" sheet contains no data rows.');
@@ -58,7 +58,7 @@ function App() {
           </div>
         )}
 
-        <FileUploader onFileSelect={handleFileSelect} disabled={processing} />
+        <Uploader onFileSelect={handleFileSelect} disabled={processing} />
 
         <Summary summary={summary} processing={processing} />
 

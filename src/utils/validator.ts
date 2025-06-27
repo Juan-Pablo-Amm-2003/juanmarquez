@@ -14,7 +14,7 @@ const REQUIRED_COLUMNS = [
   'Con retraso',
 ];
 
-export const parseExcelFile = (file: File): Promise<Task[]> => {
+export const validateAndParse = (file: File): Promise<Task[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
