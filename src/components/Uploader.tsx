@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { UploadCloud } from 'lucide-react';
 
-interface FileUploaderProps {
+interface UploaderProps {
   onFileSelect: (file: File) => void;
   disabled: boolean;
 }
 
-const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelect, disabled }) => {
+const Uploader: React.FC<UploaderProps> = ({ onFileSelect, disabled }) => {
   const [fileName, setFileName] = useState<string | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,4 +40,4 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelect, disabled }) =
   );
 };
 
-export default FileUploader;
+export default Uploader;

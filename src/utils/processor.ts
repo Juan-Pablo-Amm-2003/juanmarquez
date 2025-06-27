@@ -1,6 +1,6 @@
 import { supabase } from '../lib/supabaseClient';
 import { Task, ProcessedTask, ProcessSummary } from '../types/task';
-import { excelDateToISOString } from './excelParser';
+import { excelDateToISOString } from './validator';
 
 export const processTasks = async (tasks: Task[], onProgress: (summary: ProcessSummary) => void): Promise<ProcessSummary> => {
   let summary: ProcessSummary = {
