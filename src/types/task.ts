@@ -4,9 +4,9 @@ export interface Task {
   'Nombre del depósito': string;
   'Progreso': number;
   'Priority': string;
-  'Fecha de creación': string | number | Date; // xlsx reads dates as numbers or strings
-  'Fecha de inicio': string | number | Date;
-  'Fecha de vencimiento': string | number | Date;
+  'Fecha de creación': number | string | Date;
+  'Fecha de inicio': number | string | Date;
+  'Fecha de vencimiento': number | string | Date;
   'Con retraso': boolean;
 }
 
@@ -16,9 +16,9 @@ export interface ProcessedTask {
   nombre_deposito: string;
   progreso: number;
   priority: string;
-  fecha_creacion: string; // ISO string
-  fecha_inicio: string; // ISO string
-  fecha_vencimiento: string; // ISO string
+  fecha_creacion: string;
+  fecha_inicio: string;
+  fecha_vencimiento: string;
   con_retraso: boolean;
 }
 
