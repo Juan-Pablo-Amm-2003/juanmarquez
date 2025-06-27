@@ -14,6 +14,49 @@ const REQUIRED_COLUMNS = [
   'Con retraso',
 ];
 
+// Helper function to normalize column names for comparison
+const normalizeColumnName = (columnName: string): string => {
+  return columnName.trim().toLowerCase();
+};
+
+// Helper function to find matching column name in the data
+const findMatchingColumn = (requiredColumn: string, availableColumns: string[]): string | null => {
+  const normalizedRequired = normalizeColumnName(requiredColumn);
+  
+  for (const availableColumn of availableColumns) {
+    if (normalizeColumnName(availableColumn) === normalizedRequired) {
+      return availableColumn;
+    }
+  }
+  
+  return null;
+};
+
+// Helper function to create column mapping
+const createColumnMapping = (requiredColumns: string[], availableColumns: string[]): { [key: string]: string } => {
+  const mapping: { [key: string]: string } = {};
+  
+  for (const requiredColumn of requiredColumns) {
+    const matchingColumn = findMatchingColumn(requiredColumn, availableColumns);
+    if (matchingColumn) {
+      mapping[requiredColumn] = matchingColumn;
+    }
+  }
+  
+  return mapping;
+};
+
+// Helper function to normalize task data using column mapping
+const normalizeTaskData = (rawTask: any, columnMapping: { [key: string]: string }): Task => {
+  const normalizedTask: any = {};
+  
+  for (const [requiredColumn, actualColumn] of Object.entries(columnMapping)) {
+    normalizedTask[requiredColumn] = rawTask[actualColumn];
+  }
+  
+  return normalizedTask as Task;
+};
+
 export const parseExcelFile = (file: File): Promise<Task[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -28,22 +71,32 @@ export const parseExcelFile = (file: File): Promise<Task[]> => {
         }
 
         const worksheet = workbook.Sheets[REQUIRED_SHEET_NAME];
-        const jsonData: Task[] = XLSX.utils.sheet_to_json(worksheet);
+        const rawJsonData: any[] = XLSX.utils.sheet_to_json(worksheet);
 
-        if (jsonData.length === 0) {
+        if (rawJsonData.length === 0) {
           resolve([]); // Resolve with empty array if no data rows
           return;
         }
 
-        // Validate columns in the first row (assuming header is the first row)
-        const firstRowKeys = Object.keys(jsonData[0]);
-        const missingColumns = REQUIRED_COLUMNS.filter(col => !firstRowKeys.includes(col));
+        // Get available column names from the first row
+        const availableColumns = Object.keys(rawJsonData[0]);
+        
+        // Create column mapping between required and available columns
+        const columnMapping = createColumnMapping(REQUIRED_COLUMNS, availableColumns);
+        
+        // Check for missing required columns
+        const missingColumns = REQUIRED_COLUMNS.filter(col => !columnMapping[col]);
 
         if (missingColumns.length > 0) {
           throw new Error(`Missing required columns: ${missingColumns.join(', ')}`);
         }
 
-        resolve(jsonData);
+        // Normalize all task data using the column mapping
+        const normalizedTasks: Task[] = rawJsonData.map(rawTask => 
+          normalizeTaskData(rawTask, columnMapping)
+        );
+
+        resolve(normalizedTasks);
       } catch (error) {
         reject(error);
       }
