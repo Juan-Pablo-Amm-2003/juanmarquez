@@ -1,6 +1,6 @@
 import React from 'react';
 import { ProcessSummary } from '../types/task';
-import { CheckCircle, AlertTriangle, RefreshCcw, FileText, UploadCloud } from 'lucide-react';
+import { AlertTriangle, RefreshCcw, FileText, UploadCloud } from 'lucide-react';
 
 interface SummaryProps {
   summary: ProcessSummary | null;
