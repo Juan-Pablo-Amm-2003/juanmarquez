@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import FileUploader from './components/FileUploader';
 import Summary from './components/Summary';
 import { parseExcelFile } from './utils/excelParser';
-import { transformAndValidateTasks, bulkUpsertTasks } from './utils/dataProcessor';
+import { transformAndValidateTasks } from './utils/dataProcessor';
 import { ProcessSummary, ExcelTask } from './types/task';
 import { AlertCircle } from 'lucide-react';
 
@@ -46,14 +46,20 @@ function App() {
       }
       console.log(`[App] Transformación completada, ${supabaseTasks.length} tareas válidas para procesar.`);
 
-      // 3. Perform bulk upsert
-      console.log('[App] 3. Realizando upsert masivo a Supabase...');
-      const finalSummary = await bulkUpsertTasks(supabaseTasks, (currentSummary) => {
-        setSummary(currentSummary);
+      // 3. Perform bulk upsert via backend API
+      console.log('[App] 3. Enviando datos al backend...');
+      const response = await fetch('/api/upsert-tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(supabaseTasks),
       });
+      if (!response.ok) {
+        throw new Error(`API error: ${response.statusText}`);
+      }
+      const finalSummary: ProcessSummary = await response.json();
+      setSummary(finalSummary);
 
       console.log('[App] Proceso de upsert completado.');
-      setSummary(finalSummary);
       console.log('--- Proceso finalizado exitosamente ---', finalSummary);
 
     } catch (err: any) {

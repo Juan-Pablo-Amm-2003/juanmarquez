@@ -74,7 +74,7 @@ export const bulkUpsertTasks = async (
     return summary;
   }
 
-  const { count, error } = await supabase.from('tareas').upsert(tasks, {
+  const { count, error } = await supabase.from('juan_marquez').upsert(tasks, {
     onConflict: 'id_tarea',
     count: 'exact',
   });
