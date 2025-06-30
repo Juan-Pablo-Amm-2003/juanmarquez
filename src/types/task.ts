@@ -2,16 +2,7 @@ export interface ExcelTask {
   'Id. de tarea': string | number | null;
   'Nombre de la tarea'?: string | null;
   'Nombre del depósito'?: string | null;
-  Progreso?: string | number | null;
-  Priority?: string | null;
-  'Asignado a'?: string | null;
-  'Creado por'?: string | null;
-  'Fecha de creación'?: string | number | Date | null;
-  'Fecha de inicio'?: string | number | Date | null;
-  'Fecha de vencimiento'?: string | number | Date | null;
-  'Es periódica'?: string | number | boolean | null;
-  'Con retraso'?: string | number | boolean | null;
-  'Fecha de finalización'?: string | number | Date | null;
+
   'Completado por'?: string | null;
   'Elementos de la lista de comprobación completados'?: number | null;
   'Elementos de la lista de comprobación'?: number | null;
@@ -23,7 +14,7 @@ export interface SupabaseTask {
   id_tarea: string;
   nombre_tarea: string | null;
   nombre_deposito: string | null;
-  progreso: string | null;
+
   priority: string | null;
   asignado_a: string | null;
   creado_por: string | null;
