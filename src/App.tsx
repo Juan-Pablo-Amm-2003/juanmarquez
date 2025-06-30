@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import FileUploader from './components/FileUploader';
 import Summary from './components/Summary';
+import TaskList from './components/TaskList';
 import { parseExcelFile } from './utils/excelParser';
 import { transformAndValidateTasks } from './utils/dataProcessor';
 import { ProcessSummary, ExcelTask } from './types/task';
@@ -11,6 +12,7 @@ function App() {
   const [processing, setProcessing] = useState(false);
   const [summary, setSummary] = useState<ProcessSummary | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [refreshSignal, setRefreshSignal] = useState(0);
 
   const handleFileSelect = async (selectedFile: File) => {
     console.log('--- Proceso iniciado ---');
@@ -60,11 +62,13 @@ function App() {
       setSummary(finalSummary);
 
       console.log('[App] Proceso de upsert completado.');
+
       console.log('--- Proceso finalizado exitosamente ---', finalSummary);
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[App] Error durante el procesamiento:', err);
-      setError(err.message || 'Ocurrió un error durante el procesamiento del archivo.');
+      const message = err instanceof Error ? err.message : 'Ocurrió un error durante el procesamiento del archivo.';
+      setError(message);
       setSummary(null);
       console.log('--- Proceso finalizado con errores ---');
     } finally {
@@ -91,6 +95,7 @@ function App() {
         <FileUploader onFileSelect={handleFileSelect} disabled={processing} />
 
         <Summary summary={summary} processing={processing} />
+        <TaskList refreshSignal={refreshSignal} />
 
         {!file && !processing && !summary && !error && (
            <div className="mt-8 p-6 bg-white rounded-lg shadow-md text-gray-700">
