@@ -2,7 +2,7 @@ import { supabase } from '../lib/supabaseClient';
 import { ExcelTask, SupabaseTask, ProcessSummary } from '../types/task';
 import { excelDateToISOString } from './excelParser';
 
-const toBoolean = (value: any): boolean | null => {
+const toBoolean = (value: unknown): boolean | null => {
   if (value === null || typeof value === 'undefined' || value === '') return null;
   const lowerValue = String(value).toLowerCase().trim();
   if (['true', 'verdadero', '1', 'yes', 'si'].includes(lowerValue)) return true;
@@ -28,7 +28,7 @@ export const transformAndValidateTasks = (excelTasks: ExcelTask[]): SupabaseTask
         id_tarea: String(task['Id. de tarea']),
         nombre_tarea: toNull(task['Nombre de la tarea']),
         nombre_deposito: toNull(task['Nombre del depósito']),
-        progreso: typeof task.Progreso === 'number' ? task.Progreso : null,
+        progreso: toNull(task.Progreso != null ? String(task.Progreso) : null),
         priority: toNull(task.Priority),
         asignado_a: toNull(task['Asignado a']),
         creado_por: toNull(task['Creado por']),
@@ -74,7 +74,7 @@ export const bulkUpsertTasks = async (
     return summary;
   }
 
-  const { count, error } = await supabase.from('tareas').upsert(tasks, {
+  const { count, error } = await supabase.from('juan_marquez').upsert(tasks, {
     onConflict: 'id_tarea',
     count: 'exact',
   });

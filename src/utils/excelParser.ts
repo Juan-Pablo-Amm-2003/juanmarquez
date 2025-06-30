@@ -42,7 +42,7 @@ export const parseExcelFile = (file: File): Promise<ExcelTask[]> => {
         console.log(`[Parser] Hoja "${REQUIRED_SHEET_NAME}" encontrada.`);
 
         const worksheet = workbook.Sheets[REQUIRED_SHEET_NAME];
-        const rawJsonData: any[] = XLSX.utils.sheet_to_json(worksheet, { defval: null });
+        const rawJsonData: Record<string, unknown>[] = XLSX.utils.sheet_to_json(worksheet, { defval: null });
         console.log(`[Parser] ${rawJsonData.length} filas de datos crudos leídas de la hoja.`);
 
         if (rawJsonData.length === 0) {
@@ -54,7 +54,7 @@ export const parseExcelFile = (file: File): Promise<ExcelTask[]> => {
         // Trim whitespace from all column headers
         console.log('[Parser] Limpiando espacios en blanco de los encabezados de las columnas...');
         const jsonData: ExcelTask[] = rawJsonData.map(row => {
-          const trimmedRow: { [key: string]: any } = {};
+          const trimmedRow: Record<string, unknown> = {};
           for (const key in row) {
             if (Object.prototype.hasOwnProperty.call(row, key)) {
               trimmedRow[key.trim()] = row[key];
@@ -94,7 +94,7 @@ export const parseExcelFile = (file: File): Promise<ExcelTask[]> => {
 };
 
 // Helper to convert Excel date number/string/date object to ISO string
-export const excelDateToISOString = (excelDate: any): string | null => {
+export const excelDateToISOString = (excelDate: unknown): string | null => {
   if (!excelDate) {
     return null;
   }
@@ -115,7 +115,7 @@ export const excelDateToISOString = (excelDate: any): string | null => {
         if (!isNaN(date.getTime())) {
           return date.toISOString();
         }
-     } catch (e) {
+     } catch {
         // Ignore parsing errors for strings
      }
   }
